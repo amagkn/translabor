@@ -1,6 +1,7 @@
 package ver1
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/amagkn/translabor/internal/translation/dto"
@@ -10,6 +11,8 @@ import (
 )
 
 func (h *Handlers) Translate(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+
 	input := dto.TranslateInput{}
 
 	invalidFields, err := validation.ValidateStructWithDecodeJSONBody(r.Body, &input)
@@ -23,14 +26,12 @@ func (h *Handlers) Translate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var output dto.TranslateOutput
-	translation, err := h.uc.Translate(input)
+	output, err := h.uc.Translate(ctx, input)
 	if err != nil {
+		logger.Error(err, "h.uc.Translate")
 		errorResponse(w, http.StatusBadRequest, errorPayload{Type: base_errors.InternalServer})
 		return
 	}
-
-	output.Translation = translation
 
 	successResponse(w, http.StatusOK, output)
 }

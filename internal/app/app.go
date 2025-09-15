@@ -7,18 +7,27 @@ import (
 	"syscall"
 
 	"github.com/amagkn/translabor/config"
+	"github.com/amagkn/translabor/pkg/base_errors"
 	"github.com/amagkn/translabor/pkg/http_server"
 	"github.com/amagkn/translabor/pkg/logger"
+	"github.com/amagkn/translabor/pkg/postgres"
 	"github.com/amagkn/translabor/pkg/router"
 	"github.com/go-chi/chi/v5"
 )
 
 type Dependences struct {
 	RouterHTTP *chi.Mux
+	Postgres   *postgres.Pool
 }
 
 func Run(ctx context.Context, c config.Config) (err error) {
 	var deps Dependences
+
+	deps.Postgres, err = postgres.New(ctx, c.Postgres)
+	if err != nil {
+		return base_errors.WithPath("postgres.New", err)
+	}
+	defer deps.Postgres.Close()
 
 	deps.RouterHTTP = router.New()
 

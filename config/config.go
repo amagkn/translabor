@@ -4,6 +4,7 @@ import (
 	"github.com/amagkn/translabor/pkg/base_errors"
 	"github.com/amagkn/translabor/pkg/http_server"
 	"github.com/amagkn/translabor/pkg/logger"
+	"github.com/amagkn/translabor/pkg/postgres"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -21,9 +22,10 @@ Initialization steps:
  2. Use envconfig to map variables to the struct
 */
 type Config struct {
-	App    App
-	Logger logger.Config
-	HTTP   http_server.Config
+	App      App
+	Logger   logger.Config
+	HTTP     http_server.Config
+	Postgres postgres.Config
 }
 
 func New() (Config, error) {

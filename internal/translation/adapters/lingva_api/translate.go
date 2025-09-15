@@ -8,10 +8,13 @@ import (
 
 	"github.com/amagkn/translabor/internal/translation/dto"
 	"github.com/amagkn/translabor/pkg/base_errors"
+	"github.com/amagkn/translabor/pkg/logger"
 )
 
 func (l *LingvaAPI) Translate(input dto.TranslateInput) (string, error) {
 	lingvaURL := fmt.Sprintf("https://lingva.ml/api/v1/%s/%s/%s", input.Source, input.Target, input.Query)
+	logger.Info(fmt.Sprintf("Init request: %s", lingvaURL))
+
 	res, err := http.Get(lingvaURL)
 	if err != nil {
 		return "", base_errors.WithPath("http.Get", err)
